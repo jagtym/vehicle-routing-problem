@@ -5,19 +5,12 @@
 
 using namespace std;
 
-const int TIME_LIMIT = 900;
-
 int main(int argc, char* argv[]) {
     if (argc != 2) {
         cout << "usage: " << argv[0] << " [dataset_file]" << endl;
     }
 
     const string filename = argv[1];
-    string problem_name;
-    int vehicle_number;
-    int capacity;
-    vector< vector<int> > customers;
-
     ifstream input_file;
     input_file.open(filename);
 
