@@ -18,4 +18,19 @@ int main(int argc, char* argv[]) {
         cerr << "File not found!" << endl;
         return 1;
     }
+
+    string problem_name;
+    int vehicle_number;
+    int capacity;
+
+    string line;
+    vector<string> file_content;
+    while(input_file) {
+        getline(input_file, line);
+        file_content.push_back(line);
+    }
+
+    for_each(file_content.begin(), file_content.end(), [](string line){
+        cout << line << endl;
+    });
 }
