@@ -86,11 +86,13 @@ int main(int argc, char* argv[]) {
     const int MIN_TIME = 9999999;
 
     int visited_customers = 0;
-    int act_time = 0;
+    double act_time = 0;
     int act_capacity = capacity;
     int act_location = 0;
-    int minimum_time = MIN_TIME;
+    double minimum_time = MIN_TIME;
     int next_location = 0;
+    int trucks = 0;
+    double distance = 0;
     customers[0].is_served = true;
 
     while (visited_customers < customers.size() - 1) {
@@ -131,13 +133,25 @@ int main(int argc, char* argv[]) {
             act_location = next_location;
             minimum_time = MIN_TIME;
         }
+        else if (act_time == 0)
+        {
+            trucks = -1;
+            break;
+        }
         else {
             cout << endl << "Next truck" << endl;
-            sleep(3);
+            trucks++;
+            distance += act_time;
+            distance += matrix[act_location][0];
             act_time = 0;
             act_capacity = capacity;
             next_location = 0;
             minimum_time = MIN_TIME;
         }
     }
+    trucks++;
+    distance += act_time;
+    distance += matrix[act_location][0];
+    cout << endl << "Trucks: " << trucks << endl;
+    cout << "Distance: " << distance << endl;
 }
