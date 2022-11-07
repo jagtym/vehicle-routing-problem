@@ -16,7 +16,8 @@ struct Customer
                                                                    demand(d),
                                                                    ready_time(rt),
                                                                    due_date(dd),
-                                                                   service_time(st)
+                                                                   service_time(st),
+                                                                   is_served(false)
     {
     }
 
