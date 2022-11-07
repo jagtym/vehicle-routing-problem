@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -30,7 +31,13 @@ int main(int argc, char* argv[]) {
         file_content.push_back(line);
     }
 
-    for_each(file_content.begin(), file_content.end(), [](string line){
+    problem_name = file_content[0]; 
+
+    istringstream(file_content[4]) >> vehicle_number >> capacity;
+    cout << vehicle_number << " " << capacity << endl;
+
+    const int first_customer_line = 7;
+    for_each(file_content.begin() + first_customer_line, file_content.end(), [](string line){
         cout << line << endl;
     });
 }
