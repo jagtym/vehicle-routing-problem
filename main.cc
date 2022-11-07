@@ -6,6 +6,34 @@
 
 using namespace std;
 
+#include "customer.h"
+
+void load_file_contents(ifstream &file, vector<string> &file_content) {
+    string line;
+    while(file) {
+        getline(file, line);
+        file_content.push_back(line);
+    }
+}
+
+void populate_customer_array(vector<string> &file_content, vector<Customer> &customers) {
+    const int first_customer_line = 9;
+    
+    for (int i = first_customer_line; i < file_content.size() - 2; i++) {
+        int index;
+        int x_cord;
+        int y_cord;
+        int demand;
+        int ready_time;
+        int due_date;
+        int service_time;
+
+        istringstream(file_content[i]) >> index >> x_cord >> y_cord >> demand >> ready_time >> due_date >> service_time;
+        Customer customer = Customer(index, x_cord, y_cord, demand, ready_time, due_date, service_time); 
+        customers.push_back(customer);
+    }
+}
+
 int main(int argc, char* argv[]) {
     if (argc != 2) {
         cout << "usage: " << argv[0] << " [dataset_file]" << endl;
@@ -24,20 +52,19 @@ int main(int argc, char* argv[]) {
     int vehicle_number;
     int capacity;
 
-    string line;
     vector<string> file_content;
-    while(input_file) {
-        getline(input_file, line);
-        file_content.push_back(line);
-    }
+    load_file_contents(input_file, file_content);
 
     problem_name = file_content[0]; 
-
     istringstream(file_content[4]) >> vehicle_number >> capacity;
     cout << vehicle_number << " " << capacity << endl;
 
-    const int first_customer_line = 7;
-    for_each(file_content.begin() + first_customer_line, file_content.end(), [](string line){
-        cout << line << endl;
+    vector<Customer> customers;
+    populate_customer_array(file_content, customers);
+
+    for_each(customers.begin(), customers.end(), [](Customer customer) {
+        customer.print();
     });
+
+
 }
