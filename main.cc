@@ -22,7 +22,7 @@ void load_file_contents(ifstream &file, vector<string> &file_content) {
 void populate_customer_array(vector<string> &file_content, vector<Customer> &customers) {
     const int first_customer_line = 9;
     
-    for (int i = first_customer_line; i < file_content.size() - 2; i++) { // -2 or -1, depends on instances
+    for (int i = first_customer_line; i < file_content.size() - 1; i++) { // -2 or -1, depends on instances
         int index;
         int x_cord;
         int y_cord;
@@ -46,11 +46,14 @@ int main(int argc, char* argv[]) {
         cout << "usage: " << argv[0] << " [dataset_file]" << endl;
     }
 
-    const string filename = argv[1];
+    const string input_filename = argv[1];
+    const string output_filename = argv[2];
     ifstream input_file;
-    input_file.open(filename);
+    ofstream output_file;
+    input_file.open(input_filename);
+    output_file.open(output_filename);
 
-    if (!input_file.is_open()) {
+    if (!input_file.is_open() || !output_file.is_open()) {
         cerr << "File not found!" << endl;
         return 1;
     }
@@ -94,9 +97,11 @@ int main(int argc, char* argv[]) {
     int next_location = 0;
     int trucks = 0;
     double distance = 0;
+    int vertices = 0;
     customers[0].is_served = true;
+    int answer_matrix[customers.size()][customers.size()] = {0};
 
-    cout << "First truck: ";
+    cout << "First truck" << endl;
     while (visited_customers < customers.size() - 1) {
         bool visited_someone = false;
         for (int i = 0; i < customers.size(); i++) {    
@@ -138,6 +143,8 @@ int main(int argc, char* argv[]) {
             act_capacity -= customers[next_location].demand;
             customers[next_location].is_served = true;
             cout << next_location << " ";
+            answer_matrix[trucks][vertices] = next_location;
+            vertices++;
             act_location = next_location;
             minimum_time = MIN_TIME;
         }
@@ -149,6 +156,7 @@ int main(int argc, char* argv[]) {
         else {
             cout << endl << "Next truck" << endl;
             trucks++;
+            vertices = 0;
             distance += act_time;
             distance += matrix[act_location][0];
             act_time = 0;
@@ -160,6 +168,21 @@ int main(int argc, char* argv[]) {
     trucks++;
     distance += act_time;
     distance += matrix[act_location][0];
+    if (trucks == 0) {
+        trucks = -1; //task requirements
+        distance = 0;
+    }
     cout << endl << "Trucks: " << trucks << endl;
     cout << "Distance: " << distance << endl;
+    output_file << trucks << " " << distance << endl;
+    for (int i = 0; i < trucks; i++) {
+        int j = 0;
+        while (answer_matrix[i][j] != 0) {
+            output_file << answer_matrix[i][j] << " ";
+            j++;
+        }
+        output_file << endl;
+    }
+    input_file.close();
+    output_file.close();
 }
