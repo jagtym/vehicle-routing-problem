@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <algorithm>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -21,7 +22,7 @@ void load_file_contents(ifstream &file, vector<string> &file_content) {
 void populate_customer_array(vector<string> &file_content, vector<Customer> &customers) {
     const int first_customer_line = 9;
     
-    for (int i = first_customer_line; i < file_content.size() - 2; i++) {
+    for (int i = first_customer_line; i < file_content.size() - 2; i++) { // -2 or -1, depends on instances
         int index;
         int x_cord;
         int y_cord;
@@ -63,7 +64,7 @@ int main(int argc, char* argv[]) {
 
     problem_name = file_content[0]; 
     istringstream(file_content[4]) >> vehicle_number >> capacity;
-    cout << vehicle_number << " " << capacity << endl;
+    cout << "Vehicle number: " << vehicle_number << " Capacity: " << capacity << endl;
 
     vector<Customer> customers;
     populate_customer_array(file_content, customers);
@@ -72,7 +73,7 @@ int main(int argc, char* argv[]) {
         customer.print();
     });
 
-    float matrix[customers.size()][customers.size()];
+    double matrix[customers.size()][customers.size()];
     for (int y = 0; y < customers.size(); y++) {
         for (int x = 0; x < customers.size(); x++) {
             int first_customer_x = customers[x].x_cord; 
@@ -95,6 +96,7 @@ int main(int argc, char* argv[]) {
     double distance = 0;
     customers[0].is_served = true;
 
+    cout << "First truck: ";
     while (visited_customers < customers.size() - 1) {
         bool visited_someone = false;
         for (int i = 0; i < customers.size(); i++) {    
@@ -113,6 +115,12 @@ int main(int argc, char* argv[]) {
             // it's too late to take package 
             if (act_time + matrix[act_location][i] > customers[i].due_date) {
                 // cout << "Time exceeded!" << endl;
+                continue;
+            }
+            // won't come back to depot on time
+            if (act_time + matrix[act_location][i] + customers[i].service_time + matrix[i][0] > customers[0].due_date
+                || customers[i].ready_time + customers[i].service_time + matrix[i][0] > customers[0].due_date) {
+                // cout << "Won't come back!" << endl;
                 continue;
             }
             // searching for best customer
