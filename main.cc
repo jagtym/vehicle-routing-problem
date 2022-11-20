@@ -161,6 +161,7 @@ int main(int argc, char* argv[]) {
             distance += matrix[act_location][0];
             act_time = 0;
             act_capacity = capacity;
+            act_location = 0;
             next_location = 0;
             minimum_time = MIN_TIME;
         }
