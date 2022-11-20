@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
     }
 
     const int MIN_TIME = 9999999;
-    const int NUMBER_OF_MINS = 4;
+    const int NUMBER_OF_MINS = 3;
 
     int visited_customers = 0;
     double act_time = 0;
