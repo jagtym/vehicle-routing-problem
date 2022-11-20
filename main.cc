@@ -6,6 +6,7 @@
 #include <sstream>
 #include <cmath>
 #include <unistd.h>
+#include <iomanip>
 
 using namespace std;
 
@@ -36,7 +37,7 @@ void populate_customer_array(vector<string> &file_content, vector<Customer> &cus
     }
 }
 
-double get_distance(int x1, int y1, int x2, int y2) {
+float get_distance(int x1, int y1, int x2, int y2) {
     return sqrt((double) pow(x1 - x2, 2) + (double) pow(y1 - y2, 2));
 }
 
@@ -75,7 +76,7 @@ int main(int argc, char* argv[]) {
         customer.print();
     });
 
-    double matrix[customers.size()][customers.size()];
+    vector<vector<float>> matrix(customers.size(), vector<float> (customers.size(), 0));
     for (int y = 0; y < customers.size(); y++) {
         for (int x = 0; x < customers.size(); x++) {
             int first_customer_x = customers[x].x_cord; 
@@ -98,7 +99,7 @@ int main(int argc, char* argv[]) {
     double distance = 0;
     int vertices = 0;
     customers[0].is_served = true;
-    int answer_matrix[customers.size()][customers.size()] = {0};
+    vector<vector<int>> answer_matrix(customers.size(), vector<int> (customers.size(), 0));
 
     cout << "First truck" << endl;
     while (visited_customers < customers.size() - 1) {
@@ -172,8 +173,8 @@ int main(int argc, char* argv[]) {
         distance = 0;
     }
     cout << endl << "Trucks: " << trucks << endl;
-    cout << "Distance: " << distance << endl;
-    output_file << trucks << " " << distance << endl;
+    cout << "Distance: " << fixed << setprecision(5) << distance << endl;
+    output_file << trucks << " " << fixed << setprecision(5) << distance << endl;
     for (int i = 0; i < trucks; i++) {
         int j = 0;
         while (answer_matrix[i][j] != 0) {
