@@ -13,16 +13,15 @@ using namespace std;
 
 void load_file_contents(ifstream &file, vector<string> &file_content) {
     string line;
-    while(file) {
-        getline(file, line);
+    while(file >> ws && getline(file, line)) {
         file_content.push_back(line);
     }
 }
 
 void populate_customer_array(vector<string> &file_content, vector<Customer> &customers) {
-    const int first_customer_line = 9;
+    const int first_customer_line = 6;
     
-    for (int i = first_customer_line; i < file_content.size() - 1; i++) { // -2 or -1, depends on instances
+    for (int i = first_customer_line; i < file_content.size(); i++) { 
         int index;
         int x_cord;
         int y_cord;
@@ -65,8 +64,8 @@ int main(int argc, char* argv[]) {
     vector<string> file_content;
     load_file_contents(input_file, file_content);
 
-    problem_name = file_content[0]; 
-    istringstream(file_content[4]) >> vehicle_number >> capacity;
+    problem_name = file_content[0];
+    istringstream(file_content[3]) >> vehicle_number >> capacity;
     cout << "Vehicle number: " << vehicle_number << " Capacity: " << capacity << endl;
 
     vector<Customer> customers;
