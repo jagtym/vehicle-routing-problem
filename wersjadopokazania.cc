@@ -41,54 +41,19 @@ float get_distance(int x1, int y1, int x2, int y2) {
     return sqrt((float) pow(x1 - x2, 2) + (float) pow(y1 - y2, 2));
 }
 
-int main(int argc, char* argv[]) {
-    if (argc != 3) {
-        cout << "usage: " << argv[0] << " [dataset_file] [output_file]" << endl;
-        return 1;
-    }
-
-    const string input_filename = argv[1];
-    const string output_filename = argv[2];
-    ifstream input_file;
-    ofstream output_file;
-    input_file.open(input_filename);
-    output_file.open(output_filename);
-
-    if (!input_file.is_open() || !output_file.is_open()) {
-        cerr << "File not found!" << endl;
-        return 2;
-    }
-
-    string problem_name;
-    int vehicle_number;
-    int capacity;
-
-    vector<string> file_content;
-    load_file_contents(input_file, file_content);
-
-    problem_name = file_content[0];
-    istringstream(file_content[3]) >> vehicle_number >> capacity;
-    cout << "Vehicle number: " << vehicle_number << " Capacity: " << capacity << endl;
-
-    vector<Customer> customers;
-    populate_customer_array(file_content, customers);
-
-    // for_each(customers.begin(), customers.end(), [](Customer customer) {
-    //     customer.print();
-    // });
-
-    vector<vector<float>> matrix(customers.size(), vector<float> (customers.size(), 0));
-    for (int y = 0; y < customers.size(); y++) {
-        for (int x = 0; x < customers.size(); x++) {
-            int first_customer_x = customers[x].x_cord; 
-            int first_customer_y = customers[x].y_cord;
-            int second_customer_x = customers[y].x_cord;
-            int second_customer_y = customers[y].y_cord; 
-            matrix[y][x] = get_distance(first_customer_x, first_customer_y, second_customer_x, second_customer_y);
+void save_output(ofstream &output_file, double distance, int trucks, vector<vector<int>> &answer_matrix) {
+    output_file << trucks << " " << fixed << setprecision(5) << distance << endl;
+    for (int i = 0; i < trucks; i++) {
+        int j = 0;
+        while (answer_matrix[i][j] != 0) {
+            output_file << answer_matrix[i][j] << " ";
+            j++;
         }
+        output_file << endl;
     }
+}
 
-    // start funkcji
+Results find_answer(int capacity, vector<Customer> &customers, vector<vector<float>> &matrix) {
     const int MIN_TIME = 9999999;
     const int NUMBER_OF_MINS = 3;
 
@@ -163,7 +128,6 @@ int main(int argc, char* argv[]) {
         }
 
         if (min_times_vector.size() != 0) {
-            srand(time(NULL));
             int random = 0;
             if (min_times_vector.size() < NUMBER_OF_MINS) {
                 random = rand() % min_times_vector.size();
@@ -207,7 +171,6 @@ int main(int argc, char* argv[]) {
             minimum_time = MIN_TIME;
         }
     }
-
     trucks++;
     distance += act_time;
     distance += matrix[act_location][0];
@@ -217,15 +180,64 @@ int main(int argc, char* argv[]) {
     }
     cout << endl << "Trucks: " << trucks << endl;
     cout << "Distance: " << fixed << setprecision(5) << distance << endl;
-    output_file << trucks << " " << fixed << setprecision(5) << distance << endl;
-    for (int i = 0; i < trucks; i++) {
-        int j = 0;
-        while (answer_matrix[i][j] != 0) {
-            output_file << answer_matrix[i][j] << " ";
-            j++;
-        }
-        output_file << endl;
+
+    return Results(trucks, distance, answer_matrix);
+}
+
+int main(int argc, char* argv[]) {
+    if (argc != 3) {
+        cout << "usage: " << argv[0] << " [dataset_file] [output_file]" << endl;
+        return 1;
     }
+
+    const string input_filename = argv[1];
+    const string output_filename = argv[2];
+    ifstream input_file;
+    ofstream output_file;
+    input_file.open(input_filename);
+    output_file.open(output_filename);
+
+    srand(time(NULL));
+
+    if (!input_file.is_open() || !output_file.is_open()) {
+        cerr << "File not found!" << endl;
+        return 2;
+    }
+
+    string problem_name;
+    int vehicle_number;
+    int capacity;
+
+    vector<string> file_content;
+    load_file_contents(input_file, file_content);
+
+    problem_name = file_content[0];
+    istringstream(file_content[3]) >> vehicle_number >> capacity;
+    cout << "Vehicle number: " << vehicle_number << " Capacity: " << capacity << endl;
+
+    vector<Customer> customers;
+    populate_customer_array(file_content, customers);
+
+    // for_each(customers.begin(), customers.end(), [](Customer customer) {
+    //     customer.print();
+    // });
+
+    vector<vector<float>> matrix(customers.size(), vector<float> (customers.size(), 0));
+    for (int y = 0; y < customers.size(); y++) {
+        for (int x = 0; x < customers.size(); x++) {
+            int first_customer_x = customers[x].x_cord; 
+            int first_customer_y = customers[x].y_cord;
+            int second_customer_x = customers[y].x_cord;
+            int second_customer_y = customers[y].y_cord; 
+            matrix[y][x] = get_distance(first_customer_x, first_customer_y, second_customer_x, second_customer_y);
+        }
+    }
+
+    //start funkcji
+    Results results = find_answer(capacity, customers, matrix);
+    // cout << results.distance << " " << results.trucks << endl << results.answer_m[0][0];
+    save_output(output_file, results.distance, results.trucks, results.answer_m);
+    
     input_file.close();
     output_file.close();
 }

@@ -26,3 +26,27 @@ struct Customer
         cout << index << " " << x_cord << " " << y_cord << " " << demand << " " << ready_time << " " << due_date << " " << service_time << endl;
     }
 };
+
+struct Results {
+    vector<vector<int>> answer_matrix;
+    int trucks;
+    double distance;
+    vector<vector<int>> answer_m;
+
+    Results(int trucks, double distance, vector<vector<int>> &answer_matrix) : trucks(trucks),
+                                                                               distance(distance)
+    {
+
+        for (int j = 0; j < answer_matrix.size(); j++) {
+            vector<int> empty(answer_matrix.size(), 0); 
+            answer_m.push_back(empty);
+        }
+
+        for (int j = 0; j < answer_matrix.size(); j++) {
+            for (int i = 0; i < answer_matrix.size(); i++) {
+                // cout << i << " " << j << ": " << answer_matrix[i][j] << endl;
+                answer_m[i][j] = answer_matrix[i][j];
+            }
+        }
+    }
+};

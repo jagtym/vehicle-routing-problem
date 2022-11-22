@@ -43,7 +43,7 @@ float get_distance(int x1, int y1, int x2, int y2) {
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {
-        cout << "usage: " << argv[0] << " [dataset_file] [output_file]"<< endl;
+        cout << "usage: " << argv[0] << " [dataset_file] [output_file]" << endl;
         return 1;
     }
 
@@ -89,22 +89,26 @@ int main(int argc, char* argv[]) {
     }
 
     const int MIN_TIME = 9999999;
+    const int NUMBER_OF_MINS = 3;
 
     int visited_customers = 0;
     double act_time = 0;
     int act_capacity = capacity;
     int act_location = 0;
-    double minimum_time = MIN_TIME;
+    float minimum_time = MIN_TIME;
     int next_location = 0;
     int trucks = 0;
     double distance = 0;
     int vertices = 0;
+    int number_of_minimums = 0;
     customers[0].is_served = true;
     vector<vector<int>> answer_matrix(customers.size(), vector<int> (customers.size(), 0));
 
     cout << "First truck" << endl;
     while (visited_customers < customers.size() - 1) {
         bool visited_someone = false;
+        vector<float> min_times_vector;
+        vector<float> min_locations_vector;
         for (int i = 0; i < customers.size(); i++) {    
             if (i == act_location) {
                 continue;
@@ -130,11 +134,37 @@ int main(int argc, char* argv[]) {
                 continue;
             }
             // searching for best customer
-            if (customers[i].ready_time - matrix[act_location][i] + act_time < minimum_time) {
-                next_location = i;
-                minimum_time = customers[i].ready_time - matrix[act_location][i] + act_time;
-                visited_someone = true;
+            // if (customers[i].ready_time - matrix[act_location][i] + act_time < minimum_time) {
+            //     next_location = i;
+            //     minimum_time = customers[i].ready_time - matrix[act_location][i] + act_time;
+            //     visited_someone = true;
+            // }
+            bool inserted = false;
+            int j = 0;
+            minimum_time = customers[i].ready_time - matrix[act_location][i] + act_time;
+            while(!inserted) {
+                if (min_times_vector.size() == j) {
+                    min_times_vector.push_back(minimum_time);
+                    min_locations_vector.push_back(i);
+                    inserted = true;
+                }
+                else {
+                    if (minimum_time < min_times_vector[j]) {
+                        min_times_vector.insert(min_times_vector.begin() + j, minimum_time);
+                        min_locations_vector.insert(min_locations_vector.begin() + j, i);
+                        inserted = true;
+                    }
+                    else j++;
+                }
             }
+        }
+        if (min_times_vector.size() != 0) {
+            srand(time(NULL));
+            int random = 0;
+            if (min_times_vector.size() < NUMBER_OF_MINS) random = rand() % min_times_vector.size();
+            else random = rand() % NUMBER_OF_MINS;
+            next_location = min_locations_vector[random];
+            visited_someone = true;
         }
         if (visited_someone) {
             visited_customers++;
