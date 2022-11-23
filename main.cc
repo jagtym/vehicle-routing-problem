@@ -130,11 +130,49 @@ int main(int argc, char* argv[]) {
                 continue;
             }
             // searching for best customer
-            if (customers[i].ready_time - matrix[act_location][i] + act_time < minimum_time) {
+            //
+            //
+            // low trucks, decent distance
+            // if (customers[i].ready_time - matrix[act_location][i] + act_time < minimum_time) {
+            //     next_location = i;
+            //     minimum_time = customers[i].ready_time - matrix[act_location][i] + act_time;
+            //     visited_someone = true;
+            // }
+            //
+            // nothing interesting
+            // if (max((double) matrix[act_location][i], (double) customers[i].ready_time - act_time) < minimum_time) {
+            //     next_location = i;
+            //     minimum_time = (double) max((double) matrix[act_location][i], (double) customers[i].ready_time - act_time);
+            //     visited_someone = true;
+            // }
+            //
+            // many trucks, very low distance
+            // if (matrix[act_location][i] + (act_time + matrix[act_location][i] - customers[i].ready_time) < minimum_time) {
+            //     next_location = i;
+            //     minimum_time = matrix[act_location][i] + (act_time + matrix[act_location][i] - customers[i].ready_time);
+            //     visited_someone = true;
+            // }
+            //
+            // low trucks, good distance - not always
+            // next_location = i;
+            // visited_someone = true;
+            // break;
+            // 
+            // nothing interesting
+            // if (customers[i].due_date - matrix[act_location][i] < minimum_time) {
+            //     next_location = i;
+            //     minimum_time = customers[i].due_date - matrix[act_location][i];
+            //     visited_someone = true;
+            // }
+            //
+            // lower trucks, decent distance
+            if (act_time + matrix[act_location][i] + (customers[i].ready_time - matrix[act_location][i] - act_time) + customers[i].service_time < minimum_time) {
                 next_location = i;
-                minimum_time = customers[i].ready_time - matrix[act_location][i] + act_time;
+                minimum_time = act_time + matrix[act_location][i] + (customers[i].ready_time - matrix[act_location][i] - act_time) + customers[i].service_time;
                 visited_someone = true;
             }
+
+            
         }
         if (visited_someone) {
             visited_customers++;
